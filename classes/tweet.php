@@ -23,8 +23,8 @@ class Tweet{
      * Récupère les tweets d'un utilisateur
      * @return void
      */
-    public function get_user_tweets($user){
-        $sql = "SELECT * FROM tweet WHERE tweet.user = :user";
+    public function get_user_tweets($user, $limit){
+        $sql = "SELECT * FROM tweet WHERE tweet.user = :user ORDER BY created_at DESC LIMIT ".$limit;
         $query = $this->connexion->prepare($sql);
         $query->execute(['user' => $user]);
         $donnees = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -35,8 +35,8 @@ class Tweet{
      * Récupère tout les tweets
      * @return void
      */
-    public function get_tweets(){
-        $sql = "SELECT * FROM tweet";
+    public function get_tweets($limit){
+        $sql = "SELECT * FROM tweet ORDER BY created_at DESC LIMIT ".$limit;
         $query = $this->connexion->prepare($sql);
         $query->execute();
         $donnees = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -47,10 +47,11 @@ class Tweet{
      * Récupère les tweets associés à un tag
      * @return void
      */
-    public function get_tag_tweets($tag){
-        $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tags ON(tags.id = tweet_has_tag.tag_id) JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) WHERE tags.nom  = :tag";
+    public function get_tag_tweets($tag, $limit){
+        $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tags ON(tags.id = tweet_has_tag.tag_id) JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) WHERE tags.nom  = :tag ORDER BY created_at DESC LIMIT ".$limit;
         $query = $this->connexion->prepare($sql);
-        $query->execute(['tag' => $tag]);
+        $query->execute([
+            'tag' => $tag]);
         $donnees = $query->fetchAll(PDO::FETCH_ASSOC);
         return $donnees;
     }
@@ -59,8 +60,8 @@ class Tweet{
      * Récupère les tweets associés à un user et un tag particulier. On prend en param l'utilisateur et l'id du tweet
      *@return void
      */
-    public function get_user_tag_tweet($user, $tag){
-        $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) JOIN tags ON(tags.id = tweet_has_tag.tag_id) WHERE tweet.user = :user AND tags.nom  = :tag ;";
+    public function get_user_tag_tweet($user, $tag, $limit){
+        $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) JOIN tags ON(tags.id = tweet_has_tag.tag_id) WHERE tweet.user = :user AND tags.nom  = :tag ORDER BY created_at DESC LIMIT ".$limit;
         $query = $this->connexion->prepare($sql);
         $query->execute([
             'user' => $user,

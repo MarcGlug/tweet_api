@@ -27,24 +27,34 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if(isset($inputs)){
         $input_user = $inputs->user;
         $input_tag = $inputs->tag;
-        // $input_page = $inputs->page;
-        // $input_per_page = $inputs->per_page;
-        // $limit = $input_page * $input_per_page;
+        $input_page = $inputs->page;
+        $input_per_page = $inputs->per_page;
+
+        //On affecte des valeurs par defaut si page et per_page ne sont pas fournis
+        if(empty($input_page)){$input_page = 1;}
+        if(empty($input_per_page)){$input_per_page = 25;}
+        $limit = $input_page * $input_per_page;
+
         //On gère les différents cas en fonction des demandes
         if(!empty($input_user)){
             if(!empty($input_tag)){
                 //Ici on récupère en fonction d'un utilisateur ET d'un tag précis!
-                $donnees = $tweet->get_user_tag_tweet($input_user, $input_tag);
+                $donnees = $tweet->get_user_tag_tweet($input_user, $input_tag, $limit);
+                echo $input_user; 
+                echo $input_tag;
             }else{
                 //Ici on récupère en fonction d'un utilisateur
-                $donnees = $tweet->get_user_tweets($input_user);
+                $donnees = $tweet->get_user_tweets($input_user, $limit);
+                echo $input_user; 
             }
         }elseif(!empty($input_tag)){
             //Ici on récupère en fonction d'un tag. 
-            $donnees = $tweet->get_tag_tweets($input_tag);
+            $donnees = $tweet->get_tag_tweets($input_tag, $limit);
+            echo $input_tag;
         }else{
             //Ici on retourne TOUT! #jaipasdoursindansmespoches
-             $donnees = $tweet->get_tweets();
+             $donnees = $tweet->get_tweets($limit);
+             echo ("ON veut tout!");
         }
         
         //On construit le JSON
