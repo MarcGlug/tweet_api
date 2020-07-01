@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le :  lun. 29 juin 2020 à 21:47
+-- Généré le :  mer. 01 juil. 2020 à 09:41
 -- Version du serveur :  10.2.3-MariaDB-log
 -- Version de PHP :  7.3.14
 
@@ -30,17 +30,18 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `tags` (
   `id` int(11) NOT NULL,
-  `nom` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `nom` varchar(255) CHARACTER SET utf8 NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `tags`
 --
 
-INSERT INTO `tags` (`id`, `nom`, `created_at`) VALUES
-(1, '#jesaispasquoimettre', '2020-06-29 21:28:05'),
-(2, '#LOL', '2020-06-29 21:28:05');
+INSERT INTO `tags` (`id`, `nom`) VALUES
+(3, '#VDM'),
+(4, '#jaimepasleselfesdetoutefacons'),
+(5, '#cestpasfaux'),
+(6, '#onsennuiesurdagobah');
 
 -- --------------------------------------------------------
 
@@ -52,7 +53,6 @@ CREATE TABLE `tweet` (
   `id` int(11) NOT NULL,
   `user` varchar(16) CHARACTER SET utf8 NOT NULL,
   `message` text CHARACTER SET utf8 NOT NULL,
-  `tag_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -60,9 +60,34 @@ CREATE TABLE `tweet` (
 -- Déchargement des données de la table `tweet`
 --
 
-INSERT INTO `tweet` (`id`, `user`, `message`, `tag_id`, `created_at`) VALUES
-(1, 'Jean-Benoit', 'Y a que moi qui comprend pas Cyril Lignac quand il parle ?', 2, '2020-06-29 21:44:53'),
-(2, 'Simon', 'Guess what I just said...', 1, '2020-06-29 21:47:05');
+INSERT INTO `tweet` (`id`, `user`, `message`, `created_at`) VALUES
+(3, 'Yoda_du_63', 'La force n\'a pas été avec moi...', '2020-06-30 21:22:45'),
+(4, 'Perceval', 'Ce qui compte c\'est les valeurs', '2020-06-30 21:31:35'),
+(5, 'Gimli', 'La bonne taille c\'est quand les pieds touche le sol', '2020-06-30 21:32:29'),
+(6, 'Perceval', 'Y\'en a gros!', '2020-06-30 21:49:26');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tweet_has_tag`
+--
+
+CREATE TABLE `tweet_has_tag` (
+  `tweet_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `tweet_has_tag`
+--
+
+INSERT INTO `tweet_has_tag` (`tweet_id`, `tag_id`) VALUES
+(3, 3),
+(3, 6),
+(4, 5),
+(5, 4),
+(6, 3),
+(6, 5);
 
 --
 -- Index pour les tables déchargées
@@ -72,14 +97,22 @@ INSERT INTO `tweet` (`id`, `user`, `message`, `tag_id`, `created_at`) VALUES
 -- Index pour la table `tags`
 --
 ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id_UNIQUE` (`id`) USING BTREE;
 
 --
 -- Index pour la table `tweet`
 --
 ALTER TABLE `tweet`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `tag_id` (`tag_id`) USING BTREE;
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Index pour la table `tweet_has_tag`
+--
+ALTER TABLE `tweet_has_tag`
+  ADD PRIMARY KEY (`tweet_id`,`tag_id`),
+  ADD KEY `tag_id` (`tag_id`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -89,23 +122,24 @@ ALTER TABLE `tweet`
 -- AUTO_INCREMENT pour la table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `tweet`
 --
 ALTER TABLE `tweet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Contraintes pour les tables déchargées
 --
 
 --
--- Contraintes pour la table `tweet`
+-- Contraintes pour la table `tweet_has_tag`
 --
-ALTER TABLE `tweet`
-  ADD CONSTRAINT `tweet_ibfk_1` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `tweet_has_tag`
+  ADD CONSTRAINT `tweet_has_tag_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweet` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `tweet_has_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
