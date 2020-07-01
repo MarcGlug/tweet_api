@@ -56,19 +56,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 //-------------------------------------------> CREATION TWEET ET TAG <-------------------------------
 
         //Par cette chaleur il faut hydrater notre petit tweet
-        // $tweet->user = $input_user;
-        // $tweet->message = $input_message;
-
-        // //Maintenant que tout est OK on s'occupe du tweet en premier et on le créer
-        // if($tweet->create_tweet()){
-        //     // Ici la création a fonctionné
-        //     http_response_code(201);
-        //     echo json_encode(["message" => "Le tweet a été ajouté"]);
-        // }else{
-        //     // Ici la création n'a pas fonctionné
-        //     http_response_code(503);
-        //     echo json_encode(["message" => "L'ajout n'a pas été effectué"]);         
-        // }
+        $tweet->user = $input_user;
+        $tweet->message = $input_message;
+        //Maintenant que tout est OK on s'occupe du tweet en premier et on le créer
+        if($tweet->create_tweet()){
+            // Ici la création a fonctionné
+            http_response_code(201);
+            echo json_encode(["message" => "Le tweet a été ajouté"]);
+        }else{
+            // Ici la création n'a pas fonctionné
+            http_response_code(503);
+            echo json_encode(["message" => "L'ajout n'a pas été effectué"]);         
+        }
 
         //Finalement occupons nous des tags
      
@@ -77,22 +76,27 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             //On regarde si le tag existe dans notre BDD
             if(empty($tag->get_tag($input_tag->nom))){
                 
-                //Si il existe on l'ajoute
+                //Si il n'existe pas on l'ajoute
                 $tag->nom = $input_tag->nom;
 
-                //if($tag->create_tag()){
-                //    // Ici la création a fonctionné
-                //    http_response_code(201);
-                //}else{
-                //    // Ici la création n'a pas fonctionné
-                //    http_response_code(503);
-                //    echo json_encode(["message" => "L'ajout du tag n'a pas été effectué"]);         
-                //}
+                if($tag->create_tag()){
+                    // Ici la création a fonctionné
+                    http_response_code(201);
+                }else{
+                    // Ici la création n'a pas fonctionné
+                    http_response_code(503);
+                    echo json_encode(["message" => "L'ajout du tag n'a pas été effectué"]);         
+                }
                 
             }
-            
+            //Attention c'est partie la bidouille. Afin de créé la jonction entre les tweet et tag dans la table tweet_has_tag, on va chercher leur id
+            //Logiquement l'id du tweet sera l'id du dernier tweet poster par notre utilisateur
+            $tweet_id = $tweet->get_user_tweets( $input_user,1)[0]['id'];
+            //Recherche de l'id du tag
+            $tag_id = $tag->get_tag($input_tag->nom)['id'];
+            //On sauvegarde la jonction sur la table tweet_has_tag
+            $tag->create_junction($tweet_id, $tag_id);
         }
-        die;
     }else{
         //On gère le cas ou la requète comporte une erreur
         echo json_encode("Une ou plusieurs informations sont manquante!");
