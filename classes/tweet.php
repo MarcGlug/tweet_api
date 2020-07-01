@@ -32,7 +32,7 @@ class Tweet{
     }
 
     /**
-     * Récupère tout les tweets
+     * Récupère tous les tweets
      * @return void
      */
     public function get_tweets($limit){

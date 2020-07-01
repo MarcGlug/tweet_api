@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le :  mer. 01 juil. 2020 à 09:41
+-- Généré le :  mer. 01 juil. 2020 à 20:49
 -- Version du serveur :  10.2.3-MariaDB-log
 -- Version de PHP :  7.3.14
 
@@ -41,7 +41,8 @@ INSERT INTO `tags` (`id`, `nom`) VALUES
 (3, '#VDM'),
 (4, '#jaimepasleselfesdetoutefacons'),
 (5, '#cestpasfaux'),
-(6, '#onsennuiesurdagobah');
+(6, '#onsennuiesurdagobah'),
+(12, '#barbeuk');
 
 -- --------------------------------------------------------
 
@@ -63,8 +64,9 @@ CREATE TABLE `tweet` (
 INSERT INTO `tweet` (`id`, `user`, `message`, `created_at`) VALUES
 (3, 'Yoda_du_63', 'La force n\'a pas été avec moi...', '2020-06-30 21:22:45'),
 (4, 'Perceval', 'Ce qui compte c\'est les valeurs', '2020-06-30 21:31:35'),
-(5, 'Gimli', 'La bonne taille c\'est quand les pieds touche le sol', '2020-06-30 21:32:29'),
-(6, 'Perceval', 'Y\'en a gros!', '2020-06-30 21:49:26');
+(5, 'Gimli', 'La bonne taille c\'est quand les pieds touchent le sol', '2020-06-30 21:32:29'),
+(6, 'Perceval', 'Y\'en a gros!', '2020-06-30 21:49:26'),
+(15, 'Jeanne', 'Ils m\'ont pas cru ils m\'auront cuit!', '2020-07-01 17:38:09');
 
 -- --------------------------------------------------------
 
@@ -87,7 +89,9 @@ INSERT INTO `tweet_has_tag` (`tweet_id`, `tag_id`) VALUES
 (4, 5),
 (5, 4),
 (6, 3),
-(6, 5);
+(6, 5),
+(15, 3),
+(15, 12);
 
 --
 -- Index pour les tables déchargées
@@ -122,13 +126,13 @@ ALTER TABLE `tweet_has_tag`
 -- AUTO_INCREMENT pour la table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT pour la table `tweet`
 --
 ALTER TABLE `tweet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Contraintes pour les tables déchargées

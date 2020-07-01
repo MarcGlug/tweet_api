@@ -25,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 //----------------------------------> GESTION ERREUR <-------------------------------------------
 
-    //On va maintenant gerer les différentes erreurs. Je choisis de bien séparer pour pouvoir donner un message d'erreur précis
+    //On va maintenant gérer les différentes erreurs. Je choisis de bien séparer pour pouvoir donner un message d'erreur précis
     if(!empty($inputs->user) && !empty($inputs->message) && !empty($inputs->tags) ){
         $input_user = $inputs->user;
         $input_message = $inputs->message;
@@ -33,13 +33,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $user_regex = "/^[a-z0-9-]{4,16}$/i";
         $tags_regex = "/(#\w+)/i";
 
-        //Vérification du format des donnees pour le nom d'utilisateur
+        //Vérification du format des données pour le nom d'utilisateur
         if(preg_match($user_regex , $input_user) == 0 ){
             http_response_code(409);
             echo json_encode("Format de nom incorrecte");
            return;
         }
-        //Vérification du format des donnees pour le message
+        //Vérification du format des données pour le message
         if(strlen($input_message) > 1000 ){
             http_response_code(409);
             echo json_encode("Message trop long! Il ne doit pas dépasser 1000 charactères!");
@@ -58,7 +58,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         //Par cette chaleur il faut hydrater notre petit tweet
         $tweet->user = $input_user;
         $tweet->message = $input_message;
-        //Maintenant que tout est OK on s'occupe du tweet en premier et on le créer
+        //Maintenant que tout est OK on s'occupe du tweet en premier et on le crée en BDD
         if($tweet->create_tweet()){
             // Ici la création a fonctionné
             http_response_code(201);
@@ -69,14 +69,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             echo json_encode(["message" => "L'ajout n'a pas été effectué"]);         
         }
 
-        //Finalement occupons nous des tags
+        //Finalement occupons-nous des tags
      
         foreach($input_tags as $input_tag){
 
             //On regarde si le tag existe dans notre BDD
             if(empty($tag->get_tag($input_tag->nom))){
                 
-                //Si il n'existe pas on l'ajoute
+                //S'il n'existe pas on l'ajoute
                 $tag->nom = $input_tag->nom;
 
                 if($tag->create_tag()){
@@ -89,8 +89,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 }
                 
             }
-            //Attention c'est partie la bidouille. Afin de créé la jonction entre les tweet et tag dans la table tweet_has_tag, on va chercher leur id
-            //Logiquement l'id du tweet sera l'id du dernier tweet poster par notre utilisateur
+            //Attention c'est parti pour la bidouille. Afin de créer la jonction entre tweets et tag dans la table tweet_has_tag, on va chercher leur id
+            //Logiquement l'id du tweet sera l'id du dernier tweet posté par notre utilisateur
             $tweet_id = $tweet->get_user_tweets( $input_user,1)[0]['id'];
             //Recherche de l'id du tag
             $tag_id = $tag->get_tag($input_tag->nom)['id'];
@@ -98,12 +98,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $tag->create_junction($tweet_id, $tag_id);
         }
     }else{
-        //On gère le cas ou la requète comporte une erreur
+        //On gère le cas où la requête comporte une erreur
         echo json_encode("Une ou plusieurs informations sont manquante!");
         http_response_code(409);
     }
 }else{
-   //On gère le cas ou la demande est faite avec un méthode non autorisée
+   //On gère le cas où la demande est faite avec une méthode non autorisée
    http_response_code(405);
    echo json_encode(array("message"=>"Méthode non autorisée!")); 
 }
