@@ -21,6 +21,7 @@ class Tweet{
 
     /**
      * Récupère les tweets d'un utilisateur
+     * @return void
      */
     public function get_user_tweets($user){
         $sql = "SELECT * FROM tweet WHERE tweet.user = :user";
@@ -32,6 +33,7 @@ class Tweet{
 
     /**
      * Récupère tout les tweets
+     * @return void
      */
     public function get_tweets(){
         $sql = "SELECT * FROM tweet";
@@ -43,6 +45,7 @@ class Tweet{
 
     /**
      * Récupère les tweets associés à un tag
+     * @return void
      */
     public function get_tag_tweets($tag){
         $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tags ON(tags.id = tweet_has_tag.tag_id) JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) WHERE tags.nom  = :tag";
@@ -54,7 +57,7 @@ class Tweet{
 
     /**
      * Récupère les tweets associés à un user et un tag particulier. On prend en param l'utilisateur et l'id du tweet
-     *
+     *@return void
      */
     public function get_user_tag_tweet($user, $tag){
         $sql = "SELECT tweet.id, tweet.user, tweet.message, tweet.created_at FROM `tweet_has_tag` JOIN tweet ON(tweet.id = tweet_has_tag.tweet_id) JOIN tags ON(tags.id = tweet_has_tag.tag_id) WHERE tweet.user = :user AND tags.nom  = :tag ;";
@@ -66,4 +69,24 @@ class Tweet{
         $donnees = $query->fetchAll(PDO::FETCH_ASSOC);
         return $donnees;
     }
+
+    public function create_tweet(){
+        $sql = " INSERT INTO tweet SET user = :user, message = :message";
+        $query = $this->connexion->prepare($sql);
+
+        // Protection contre les injections
+        $this->user=htmlspecialchars(strip_tags($this->user));
+        $this->message=htmlspecialchars(strip_tags($this->message));
+
+        // Ajout des données protégées
+        $query->bindParam(":user", $this->user);
+        $query->bindParam(":message", $this->message);
+
+        // Exécution de la requête
+        if($query->execute()){
+            return true;
+        }
+        return false;
+    }
+
 }

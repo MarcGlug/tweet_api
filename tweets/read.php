@@ -27,7 +27,9 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if(isset($inputs)){
         $input_user = $inputs->user;
         $input_tag = $inputs->tag;
-    
+        // $input_page = $inputs->page;
+        // $input_per_page = $inputs->per_page;
+        // $limit = $input_page * $input_per_page;
         //On gère les différents cas en fonction des demandes
         if(!empty($input_user)){
             if(!empty($input_tag)){
@@ -75,8 +77,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     }else{
         //On gère le cas ou la requète comporte une erreur
         echo json_encode("Erreur dans la forme de la requète. Veuillez respecter le format définie :)");
+        http_response_code(400);
     }
-
 }else{
     //On gère le cas ou la demande est faite avec un méthode non autorisée
     http_response_code(405);
